@@ -7,13 +7,14 @@ var bcrypt = require('bcryptjs');
 require('dotenv').config();
 
 const jwt = require('jsonwebtoken');
+const corsOptions ={
+    origin:'http://localhost:3000', 
+    credentials:true,
+    optionSuccessStatus:200,
+    methods: "GET, POST, PUT"
+  }
 
-app.use(
-    cors({
-        origin: "https://localhost:3000",
-        methods: ["GET", "PUT", "POST", "DELETE"],
-    })
-);
+app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use(bodyParser.urlencoded({extended: true}));
