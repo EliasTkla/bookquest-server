@@ -10,7 +10,7 @@ const jwt = require('jsonwebtoken');
 
 app.use(
     cors({
-        origin: "https://bookq.netlify.app",
+        origin: "https://localhost:3000",
         methods: ["GET", "PUT", "POST", "DELETE"],
     })
 );
