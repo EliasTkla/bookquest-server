@@ -12,9 +12,13 @@ const corsOptions ={
     credentials:true,
     optionSuccessStatus:200,
     methods: "GET, POST, PUT"
-  }
+}
 
-app.use(cors(corsOptions));
+app.use(cors());
+
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*")
+}) 
 
 app.use(express.json());
 app.use(bodyParser.urlencoded({extended: true}));
