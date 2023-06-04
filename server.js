@@ -145,7 +145,7 @@ app.post("/register", async(req, res) => {
     });
 });
 
-app.post("/login", async(req, res) => {
+app.post("/login", cors(), async(req, res) => {
     const usern = req.body.usern;
     const pwd = req.body.pwd;
 
