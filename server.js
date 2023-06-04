@@ -8,18 +8,18 @@ require('dotenv').config();
 
 const jwt = require('jsonwebtoken');
 
-app.options('*', cors());
+app.use(cors());
 app.use(express.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json())
 
-app.get("/check", cors(), (req, res) => {
+app.get("/check", (req, res) => {
     const sqlSelect = "SELECT * FROM user_books";
     db.query(sqlSelect, (err, result) => {
         if(err){
             res.send({err: err});
         }
-        
+
         if(result.length > 0) {
             res.send("books logged");
         } else {
@@ -28,7 +28,7 @@ app.get("/check", cors(), (req, res) => {
     });
 });
 
-app.post("/userInfo", cors(), (req, res) => {
+app.post("/userInfo", (req, res) => {
     const email = req.body.email;
     const verifyPwd = req.body.verifyPwd;
 
@@ -37,7 +37,7 @@ app.post("/userInfo", cors(), (req, res) => {
         if(err){
             res.send({err: err});
         }
-        
+
         if(result.length > 0) {
             if(verifyPwd !== undefined){
                 const comparison = await bcrypt.compare(verifyPwd, result[0].password);
@@ -56,16 +56,16 @@ app.post("/userInfo", cors(), (req, res) => {
     });
 });
 
-app.post("/bookLogged", cors(), (req, res) => {
+app.post("/bookLogged", (req, res) => {
     const email = req.body.email;
     const bookId = req.body.bookId;
-    
+
     const sqlSelect = "SELECT * FROM user_books WHERE email = ? AND book_id = ?";
     db.query(sqlSelect, [email, bookId], (err, result) => {
         if(err){
             res.send({err: err});
         }
-        
+
         if(result.length > 0){
             res.send({message1: "Book logged"});
         } else {
@@ -74,7 +74,7 @@ app.post("/bookLogged", cors(), (req, res) => {
     });
 });
 
-app.post("/books", cors(), (req, res) => {
+app.post("/books", (req, res) => {
     const email = req.body.email;
 
     const sqlSelect = "SELECT * FROM user_books WHERE email = ?";
@@ -82,7 +82,7 @@ app.post("/books", cors(), (req, res) => {
         if(err){
             res.send({err: err});
         }
-        
+
         if(result.length > 0) {
             res.send(result);
         } else {
@@ -91,7 +91,7 @@ app.post("/books", cors(), (req, res) => {
     });
 });
 
-app.post("/register", cors(), async(req, res) => {
+app.post("/register", async(req, res) => {
     const email = req.body.email;
     const usern = req.body.usern;
     const pwd = req.body.pwd;
@@ -101,7 +101,7 @@ app.post("/register", cors(), async(req, res) => {
         if(err){
             res.send({err: err});
         }
-        
+
         if(result.length > 0) {
             if(result.length < 2){
                 if(result[0].email === email &&  result[0].username === usern){
@@ -138,14 +138,14 @@ app.post("/register", cors(), async(req, res) => {
                 if(err){
                     res.send({err: err});
                 }
-                
+
                 res.send({message1: "User registered successfully!"});
             });
         }
     });
 });
 
-app.post("/login", cors(), async(req, res) => {
+app.post("/login", async(req, res) => {
     const usern = req.body.usern;
     const pwd = req.body.pwd;
 
@@ -154,10 +154,10 @@ app.post("/login", cors(), async(req, res) => {
         if(err){
             res.send({err: err});
         }
-        
+
         if(result.length > 0) {
             const comparison = await bcrypt.compare(pwd, result[0].password);
-            
+
             if(comparison){
                 const id = result[0].id;
                 const email = result[0].email;
@@ -168,17 +168,17 @@ app.post("/login", cors(), async(req, res) => {
             } else {
                 res.json({message:"Incorrect username or password"});
             }
-            
+
         } else {
             res.json({message:"Incorrect username or password"});
         }
     });
 });
 
-app.post("/editlog", cors(), (req, res) => {
+app.post("/editlog", (req, res) => {
     const email = req.body.email;
     const bookId = req.body.bookId;
-    
+
     const sqlIn = "SELECT * FROM user_books WHERE email = ? AND book_id = ?"
     db.query(sqlIn, [email, bookId], (err, result) => {
         if(err){
@@ -191,7 +191,7 @@ app.post("/editlog", cors(), (req, res) => {
                 if(err){
                     res.send({err: err});
                 }
-                
+
                 res.send({message1: "Book unlogged"});
             });
         } else {
@@ -200,14 +200,14 @@ app.post("/editlog", cors(), (req, res) => {
                 if(err){
                     res.send({err: err});
                 }
-                
+
                 res.send({message2: "Book logged"});
             });
         }
     });
 });
 
-app.put("/updateUserInfo", cors(), (req, res) => {
+app.put("/updateUserInfo", (req, res) => {
     const email = req.body.email;
     const newUsername = req.body.newUsername;
     const newPwd = req.body.newPwd;
@@ -217,7 +217,7 @@ app.put("/updateUserInfo", cors(), (req, res) => {
         if(err){
             res.send({err: err});
         }
-        
+
         if(result.length > 0) {
             if(result[0].email === email) {
                 const sqlInsert = "UPDATE users SET password = ? WHERE email = ? AND username = ?";
@@ -234,7 +234,7 @@ app.put("/updateUserInfo", cors(), (req, res) => {
             } else {
                 res.send({message: "Username already in use!"});
             }
-            
+
         } else {
             const sqlInsert = "UPDATE users SET username = ?, password = ? WHERE email = ?";
             const saltRounds = await bcrypt.genSalt(10);
