@@ -8,7 +8,6 @@ require('dotenv').config();
 
 const jwt = require('jsonwebtoken');
 
-app.use(cors());
 app.options('*', cors());
 app.use(express.json());
 app.use(bodyParser.urlencoded({extended: true}));
