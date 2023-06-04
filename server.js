@@ -13,7 +13,7 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json())
 
-app.get("/check", (req, res) => {
+app.get("/check", cors(), (req, res) => {
     const sqlSelect = "SELECT * FROM user_books";
     db.query(sqlSelect, (err, result) => {
         if(err){
@@ -28,7 +28,7 @@ app.get("/check", (req, res) => {
     });
 });
 
-app.post("/userInfo", (req, res) => {
+app.post("/userInfo", cors(), (req, res) => {
     const email = req.body.email;
     const verifyPwd = req.body.verifyPwd;
 
@@ -56,7 +56,7 @@ app.post("/userInfo", (req, res) => {
     });
 });
 
-app.post("/bookLogged", (req, res) => {
+app.post("/bookLogged", cors(), (req, res) => {
     const email = req.body.email;
     const bookId = req.body.bookId;
     
@@ -74,7 +74,7 @@ app.post("/bookLogged", (req, res) => {
     });
 });
 
-app.post("/books", (req, res) => {
+app.post("/books", cors(), (req, res) => {
     const email = req.body.email;
 
     const sqlSelect = "SELECT * FROM user_books WHERE email = ?";
@@ -91,7 +91,7 @@ app.post("/books", (req, res) => {
     });
 });
 
-app.post("/register", async(req, res) => {
+app.post("/register", cors(), async(req, res) => {
     const email = req.body.email;
     const usern = req.body.usern;
     const pwd = req.body.pwd;
@@ -175,7 +175,7 @@ app.post("/login", cors(), async(req, res) => {
     });
 });
 
-app.post("/editlog", (req, res) => {
+app.post("/editlog", cors(), (req, res) => {
     const email = req.body.email;
     const bookId = req.body.bookId;
     
@@ -207,7 +207,7 @@ app.post("/editlog", (req, res) => {
     });
 });
 
-app.put("/updateUserInfo", (req, res) => {
+app.put("/updateUserInfo", cors(), (req, res) => {
     const email = req.body.email;
     const newUsername = req.body.newUsername;
     const newPwd = req.body.newPwd;
