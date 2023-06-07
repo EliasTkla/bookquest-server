@@ -9,9 +9,9 @@ require('dotenv').config();
 const jwt = require('jsonwebtoken');
 
 const corsOptions ={
-    origin:'http://localhost:3000', 
-    credentials:true,
-    optionSuccessStatus:200
+    origin:'https://bookq.netlify.app', 
+    credentials: true,
+    optionSuccessStatus: 200
 }
 
 app.use(cors(corsOptions));
