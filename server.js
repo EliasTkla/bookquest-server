@@ -221,58 +221,80 @@ app.put("/updateUserInfo", (req, res) => {
     const currentPwd = req.body.currentPwd;
     const newPwd = req.body.newPwd;
 
-    const sqlVerify = "SELECT * FROM users WHERE email = ?";
+    console.log()
 
-    db.query(sqlVerify, [email], async (err, result) => {
+    const sqlVerify = "SELECT * FROM users WHERE username = ?";
+
+    db.query(sqlVerify, [modifyUsername], async (err, result) => {
         if(err){
             res.send({err: err});
         }
 
         if(result.length > 0) {
-            if(result[0].password === currentPwd){
-                const sqlIn = "SELECT * FROM users WHERE username = ? ";
-        
-                db.query(sqlIn, [modifyUsername], async (err, result) => {
-                    if(err){
-                        res.send({err: err});
-                    }
+            if(result[0].email === email){
+                const comparison = await bcrypt.compare(currentPwd, result[0].password);
 
-                    if(result.length > 0) {
-                        if(result[0].email === email) {
-                            const sqlInsert = "UPDATE users SET password = ? WHERE email = ? AND username = ?";
-                            const saltRounds = await bcrypt.genSalt(10);
-                            const encryptedPwd = await bcrypt.hash(newPwd, saltRounds);
+                if(comparison){
+                    const sqlInsert = "UPDATE users SET password = ? WHERE email = ?";
+                    const saltRounds = await bcrypt.genSalt(10);
+                    const encryptedPwd = await bcrypt.hash(newPwd, saltRounds);
 
-                            db.query(sqlInsert, [encryptedPwd, email, username], (err, result) => {
+                    db.query(sqlInsert, [encryptedPwd, email], (err, result) => {
+                        if(err){
+                            res.send({err: err});
+                        }
+
+                        res.send({message: "Updated password!"});
+                    });    
+                } else {
+                    res.send({message1: "Incorrect current user password!"});
+                }
+            } else {
+                res.send({message1: "Username already in use!"});
+            }         
+        } else {
+            const sqlIn = "SELECT * FROM users WHERE email = ? ";
+            
+            db.query(sqlIn, [email], async (err, result) => {
+                if(err){
+                    res.send({err: err});
+                }
+
+                if(result.length > 0) {
+                    const comparison = await bcrypt.compare(currentPwd, result[0].password);
+
+                    if(comparison){
+                        if(newPwd === currentPwd){
+                            const sqlInsert = "UPDATE users SET username = ? WHERE email = ?";
+
+                            db.query(sqlInsert, [modifyUsername, email], (err, result) => {
                                 if(err){
                                     res.send({err: err});
                                 }
 
-                                res.send({message: "Updated password!"});
+                                res.send({message: "Updated username!"});
                             });
                         } else {
-                            res.send({message1: "Username already in use!"});
+                            const sqlInsert = "UPDATE users SET username = ?, password = ? WHERE email = ?";
+                            const saltRounds = await bcrypt.genSalt(10);
+                            const encryptedPwd = await bcrypt.hash(newPwd, saltRounds);
+
+                            db.query(sqlInsert, [modifyUsername, encryptedPwd, email], (err, result) => {
+                                if(err){
+                                    res.send({err: err});
+                                }
+
+                                res.send({message: "Updated username and password"});
+                            });
                         }
-
                     } else {
-                        const sqlInsert = "UPDATE users SET username = ?, password = ? WHERE email = ?";
-                        const saltRounds = await bcrypt.genSalt(10);
-                        const encryptedPwd = await bcrypt.hash(newPwd, saltRounds);
-
-                        db.query(sqlInsert, [modifyUsername, encryptedPwd, email], (err, result) => {
-                            if(err){
-                                res.send({err: err});
-                            }
-
-                            res.send({message: "Updated username and password"});
-                        });
+                        res.send({message1: "Incorrect current user password!"});
                     }
-                });          
-            } else {
-                res.send({message1: "Incorrect current password!"});
-            }
-        } else {
-            res.send({message1: "Please try again later!"});
+
+                } else {
+                    res.send({message1: "Please try again later!"});
+                }
+            }); 
         }
     });
 }); 
