@@ -221,7 +221,7 @@ app.put("/updateUserInfo", (req, res) => {
     const currentPwd = req.body.currentPwd;
     const newPwd = req.body.newPwd;
 
-    console.log()
+    console.log(email, username, modifyUsername, currentPwd, newPwd);
 
     const sqlVerify = "SELECT * FROM users WHERE username = ?";
 
