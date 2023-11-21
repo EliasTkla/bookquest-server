@@ -1,8 +1,6 @@
 # BookQuest
 
-Front-end link: https://github.com/EliasTkla/bookquest-frontend
-
-Live link: https://bookq.netlify.app/
+No longer in use
 
 ## Description
 
