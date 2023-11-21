@@ -8,6 +8,8 @@ Live link: https://bookq.netlify.app/
 
 The server will connect to a MySQL database configured in the /config folder and store all data passed from the front-end. Moreover, the server can also return any of that data at the request of the front-end component.
 
+Status: Inactive
+
 ## Getting Started
 
 ### Installing
